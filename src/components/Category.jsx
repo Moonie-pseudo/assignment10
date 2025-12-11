@@ -20,7 +20,7 @@ export default function Categories() {
           <div
             key={idx}
             className={`card cursor-pointer hover:scale-105 transform transition ${cat.bg} text-center py-10 rounded-lg shadow-lg`}
-            onClick={() => navigate(`/category-filtered-product/${cat.name}`)}
+            onClick={() => navigate("/supplies", { state: { category: cat.name } })}
           >
             <div className="text-5xl mb-4">{cat.emoji}</div>
             <h3 className="text-xl font-semibold">{cat.name}</h3>

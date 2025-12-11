@@ -1,11 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { useLocation } from "react-router-dom";
+
 
 export default function PetSupplies() {
+  const location = useLocation();
+
+// Map Home categories to listing types
+const categoryMap = {
+  "Pets": "pet",
+  "Pet Food": "food",
+  "Accessories": "accessory",
+  "Pet Care Products": "care",
+  "All": "All"
+};
+
+const defaultType = categoryMap[location.state?.category] || "All";
+const [typeFilter, setTypeFilter] = useState(defaultType);
+
+
   const [listings, setListings] = useState([]);
   const [filteredListings, setFilteredListings] = useState([]);
-  const [typeFilter, setTypeFilter] = useState("All");
   const [loading, setLoading] = useState(true);
 
   const filterOptions = ["All", "pet", "food", "accessory", "care"];
