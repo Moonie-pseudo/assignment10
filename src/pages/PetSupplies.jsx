@@ -3,23 +3,22 @@ import { Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 
-
 export default function PetSupplies() {
   const location = useLocation();
 
-// Map Home categories to listing types
-const categoryMap = {
-  "Pets": "pet",
-  "Pet Food": "food",
-  "Accessories": "accessory",
-  "Pet Care Products": "care",
-  "All": "All"
-};
+  // Home → category mapping
+  const categoryMap = {
+    Pets: "pet",
+    "Pet Food": "food",
+    Accessories: "accessory",
+    "Pet Care Products": "care",
+    All: "All",
+  };
 
-const defaultType = categoryMap[location.state?.category] || "All";
-const [typeFilter, setTypeFilter] = useState(defaultType);
+  const defaultType = categoryMap[location.state?.category] || "All";
 
-
+  const [typeFilter, setTypeFilter] = useState(defaultType);
+  const [searchTerm, setSearchTerm] = useState("");
   const [listings, setListings] = useState([]);
   const [filteredListings, setFilteredListings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +31,7 @@ const [typeFilter, setTypeFilter] = useState(defaultType);
       try {
         const res = await fetch("http://localhost:3000/pets");
         if (!res.ok) throw new Error("Failed to fetch listings");
+
         const data = await res.json();
         setListings(data);
         setFilteredListings(data);
@@ -45,21 +45,41 @@ const [typeFilter, setTypeFilter] = useState(defaultType);
     fetchListings();
   }, []);
 
-  // Handle type filter
+  // Filtering logic (type + name search)
   useEffect(() => {
-    if (typeFilter === "All") {
-      setFilteredListings(listings);
-    } else {
-      const filtered = listings.filter((item) => item.type === typeFilter);
-      setFilteredListings(filtered);
+    let results = listings;
+
+    // Filter by type
+    if (typeFilter !== "All") {
+      results = results.filter((item) => item.type === typeFilter);
     }
-  }, [typeFilter, listings]);
+
+    // Filter by search name
+    if (searchTerm.trim() !== "") {
+      results = results.filter((item) =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    setFilteredListings(results);
+  }, [typeFilter, searchTerm, listings]);
 
   if (loading) return <p className="text-center py-10">Loading...</p>;
 
   return (
     <div className="min-h-[80vh] px-5 py-8 bg-base-100">
       <h2 className="text-3xl font-bold mb-6 text-center">Pets & Supplies</h2>
+
+      {/* Search Bar */}
+      <div className="flex justify-center mb-6">
+        <input
+          type="text"
+          placeholder="Search by name..."
+          className="input input-bordered w-full max-w-md"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
 
       {/* Type Filter */}
       <div className="flex justify-center gap-4 mb-6">

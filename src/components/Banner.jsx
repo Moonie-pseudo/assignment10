@@ -1,4 +1,5 @@
 import React from "react";
+import { Typewriter } from "react-simple-typewriter";
 
 export default function Home() {
   const banners = [
@@ -33,10 +34,16 @@ export default function Home() {
               className="w-full h-full object-cover"
             />
 
-            {/* Overlay + Text */}
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-              <h2 className="text-3xl lg:text-5xl text-white font-bold text-center px-4">
-                {banner.tagline}
+            {/* Overlay + Animated Text */}
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center px-4">
+              <h2 className="text-3xl lg:text-5xl text-white font-bold text-center">
+                <Typewriter
+                  words={[banner.tagline]}
+                  loop={false}
+                  typeSpeed={70}
+                  deleteSpeed={40}
+                  delaySpeed={1200}
+                />
               </h2>
             </div>
 
@@ -58,7 +65,6 @@ export default function Home() {
           </div>
         ))}
       </div>
-
     </div>
   );
 }

@@ -9,7 +9,14 @@ export default function Header() {
 
   const handleLogout = () => {
     logOut();
-    setMenuOpen(false); // close dropdown on logout
+    setMenuOpen(false);
+  };
+
+  // Theme Toggle
+  const toggleTheme = () => {
+    const currentTheme = document.documentElement.getAttribute("data-theme");
+    const newTheme = currentTheme === "light" ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", newTheme);
   };
 
   const menuItems = (
@@ -36,7 +43,7 @@ export default function Header() {
     </>
   );
 
-  // Close dropdown if clicked outside
+  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -63,8 +70,17 @@ export default function Header() {
         <ul className="menu menu-horizontal px-1">{menuItems}</ul>
       </div>
 
-      {/* RIGHT: Login / Avatar */}
-      <div className="flex-none">
+      {/* RIGHT: Theme Button + Login/Avatar */}
+      <div className="flex-none flex items-center gap-3">
+
+        {/* THEME TOGGLE BUTTON */}
+        <button
+          onClick={toggleTheme}
+          className="btn btn-sm btn-ghost text-xl"
+        >
+          🌓
+        </button>
+
         {!user ? (
           <div className="hidden lg:flex gap-3">
             <Link to="/login" className="btn btn-sm">
@@ -97,7 +113,7 @@ export default function Header() {
         )}
       </div>
 
-      {/* DROPDOWN for small screens */}
+      {/* MOBILE MENU */}
       <div className="lg:hidden flex-none" ref={dropdownRef}>
         <button
           onClick={() => setMenuOpen(!menuOpen)}
@@ -122,6 +138,11 @@ export default function Header() {
         {menuOpen && (
           <ul className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 absolute right-5 top-16 z-50">
             {menuItems}
+
+            {/* MOBILE THEME TOGGLE */}
+            <li>
+              <button onClick={toggleTheme}>Toggle Theme 🌓</button>
+            </li>
 
             {user ? (
               <>
