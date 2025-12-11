@@ -1,13 +1,15 @@
 import { Link, NavLink } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 export default function Header() {
   const { user, logOut } = useContext(AuthContext);
   const [menuOpen, setMenuOpen] = useState(false);
+  const dropdownRef = useRef();
 
   const handleLogout = () => {
     logOut();
+    setMenuOpen(false); // close dropdown on logout
   };
 
   const menuItems = (
@@ -33,6 +35,19 @@ export default function Header() {
       )}
     </>
   );
+
+  // Close dropdown if clicked outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="navbar bg-base-100 px-5 shadow-sm">
@@ -61,14 +76,17 @@ export default function Header() {
           </div>
         ) : (
           <div className="hidden lg:flex items-center gap-3">
-            <img
-              src={
-                user?.photoURL || "https://i.ibb.co/MBtjqXQ/default-avatar.png"
-              }
-              className="w-10 h-10 rounded-full object-cover"
-              referrerPolicy="no-referrer"
-            />
-          
+            <Link to="/profile">
+              <img
+                src={
+                  user?.photoURL ||
+                  "https://i.ibb.co/MBtjqXQ/default-avatar.png"
+                }
+                className="w-10 h-10 rounded-full object-cover cursor-pointer"
+                referrerPolicy="no-referrer"
+                alt="Profile"
+              />
+            </Link>
             <button
               onClick={handleLogout}
               className="btn btn-sm btn-error text-white"
@@ -80,7 +98,7 @@ export default function Header() {
       </div>
 
       {/* DROPDOWN for small screens */}
-      <div className="lg:hidden flex-none">
+      <div className="lg:hidden flex-none" ref={dropdownRef}>
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="btn btn-square btn-ghost"
@@ -104,19 +122,31 @@ export default function Header() {
         {menuOpen && (
           <ul className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 absolute right-5 top-16 z-50">
             {menuItems}
-            {!user ? (
+
+            {user ? (
               <>
                 <li>
-                  <Link to="/login">Login</Link>
+                  <Link to="/profile" onClick={() => setMenuOpen(false)}>
+                    Profile
+                  </Link>
                 </li>
                 <li>
-                  <Link to="/register">Register</Link>
+                  <button onClick={handleLogout}>Logout</button>
                 </li>
               </>
             ) : (
-              <li>
-                <button onClick={handleLogout}>Logout</button>
-              </li>
+              <>
+                <li>
+                  <Link to="/login" onClick={() => setMenuOpen(false)}>
+                    Login
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/register" onClick={() => setMenuOpen(false)}>
+                    Register
+                  </Link>
+                </li>
+              </>
             )}
           </ul>
         )}

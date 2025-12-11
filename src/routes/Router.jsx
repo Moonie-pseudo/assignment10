@@ -8,6 +8,7 @@ import Register from "../pages/Register";
 import MyListings from "../pages/MyListings";
 import MyOrders from "../pages/MyOrders";
 import PetSupplies from "../pages/PetSupplies";
+import Profile from "../pages/Profile"; 
 import NotFound from "../pages/NotFound";
 import PrivateRoute from "./PrivateRoute";
 
@@ -16,12 +17,19 @@ const router = createBrowserRouter([
     path: "/",
     element: <MainLayout />,
     errorElement: <NotFound />,
-
     children: [
       { path: "/", element: <Home /> },
       { path: "/supplies", element: <PetSupplies /> },
 
       // Protected Pages
+      {
+        path: "/profile",
+        element: (
+          <PrivateRoute>
+            <Profile />
+          </PrivateRoute>
+        ),
+      },
       {
         path: "/add-listing",
         element: (
