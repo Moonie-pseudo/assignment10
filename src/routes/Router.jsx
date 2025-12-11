@@ -19,7 +19,10 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       { path: "/", element: <Home /> },
-      { path: "/supplies", element: <PetSupplies /> },
+      { path: "/supplies", 
+        element: <PetSupplies />, 
+        
+      },
 
       // Protected Pages
       {

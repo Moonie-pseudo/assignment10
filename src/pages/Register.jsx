@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-hot-toast";
 
 export default function Register() {
   const { register, loginWithGoogle } = useContext(AuthContext);
@@ -14,15 +15,31 @@ export default function Register() {
 
   const navigate = useNavigate();
 
+  // Password validation function
+  const isValidPassword = (pwd) => {
+    const hasUpperCase = /[A-Z]/.test(pwd);
+    const hasLowerCase = /[a-z]/.test(pwd);
+    const hasMinLength = pwd.length >= 6;
+    return hasUpperCase && hasLowerCase && hasMinLength;
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
+    if (!isValidPassword(password)) {
+      toast.error(
+        "Password must be at least 6 characters long and contain both uppercase and lowercase letters."
+      );
+      return;
+    }
+
+    setLoading(true);
     try {
       await register(email, password, name, photoURL);
+      toast.success("Registration successful!");
       navigate("/");
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -32,9 +49,10 @@ export default function Register() {
     setLoading(true);
     try {
       await loginWithGoogle();
+      toast.success("Logged in with Google!");
       navigate("/");
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
